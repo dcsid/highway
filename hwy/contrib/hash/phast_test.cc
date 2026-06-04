@@ -49,7 +49,7 @@ namespace {
 
 // --------------------------------------------------------------------------
 // AesCtrEngine requires AES-NI, which is not available on HWY_SCALAR.
-#if HWY_TARGET == HWY_SCALAR
+#if (HWY_TARGET == HWY_SCALAR || HWY_TARGET == HWY_EMU128) && !HWY_IDE
 HWY_NOINLINE void TestAllRoundtrip() {}
 HWY_NOINLINE void TestQueryConsistency() {}
 HWY_NOINLINE void TestHeadroomSweep() {}
@@ -199,12 +199,11 @@ HWY_NOINLINE void TestHeadroomSweep() {
   PROFILER_PRINT_RESULTS();
 }
 
-#endif  // HWY_TARGET != HWY_SCALAR
+#endif  // HWY_TARGET != HWY_SCALAR && HWY_TARGET != HWY_EMU128
 
 }  // namespace
 }  // namespace HWY_NAMESPACE
 }  // namespace hwy
-
 HWY_AFTER_NAMESPACE();
 
 #if HWY_ONCE

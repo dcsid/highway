@@ -40,7 +40,7 @@ HWY_BEFORE_NAMESPACE();
 namespace hwy {
 namespace HWY_NAMESPACE {
 namespace {
-#if HWY_TARGET != HWY_SCALAR
+#if (HWY_TARGET != HWY_SCALAR && HWY_TARGET != HWY_EMU128) || HWY_IDE
 
 HWY_NOINLINE void TestLatency(const Phast& phast) {
   FuncInput input = Unpredictable1();
@@ -121,14 +121,15 @@ HWY_NOINLINE void TestAllLatency() {
   TestLatency(MakePhast(keys));
 }
 HWY_NOINLINE void TestAllThroughput() {
-  const AlignedVector<uint32_t> keys = GenerateKeys(1000 * 1000);
+  const size_t num_keys = HWY_IS_DEBUG_BUILD ? 10 * 1000 : 1000 * 1000;
+  const AlignedVector<uint32_t> keys = GenerateKeys(num_keys);
   TestThroughput(MakePhast(keys), keys);
 }
 
-#else   // HWY_TARGET == HWY_SCALAR
+#else   // HWY_TARGET == HWY_SCALAR || HWY_TARGET == HWY_EMU128
 void TestAllLatency() {}
 void TestAllThroughput() {}
-#endif  // HWY_TARGET != HWY_SCALAR
+#endif  // HWY_TARGET != HWY_SCALAR && HWY_TARGET != HWY_EMU128
 
 }  // namespace
 }  // namespace HWY_NAMESPACE
